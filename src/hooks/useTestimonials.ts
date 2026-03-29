@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { blink } from '@/lib/blink'
+import { supabase } from '@/lib/supabase'
 
 export type Testimonial = {
   id: string
@@ -16,16 +16,18 @@ export function useTestimonials() {
   const listTestimonials = useQuery({
     queryKey: ['testimonials'],
     queryFn: async () => {
-      const { data } = await blink.db.table('testimonials').list()
-      return data as Testimonial[]
+      const { data, error } = await supabase.from('testimonials').select('*')
+      if (error) throw error
+      return (data as Testimonial[]) || []
     },
   })
 
   const createTestimonial = useMutation({
     mutationFn: async (newTestimonial: Partial<Testimonial>) => {
       const id = crypto.randomUUID()
-      const { data } = await blink.db.table('testimonials').create({ ...newTestimonial, id })
-      return data
+      const { data, error } = await supabase.from('testimonials').insert([{ ...newTestimonial, id, createdAt: new Date().toISOString() }]).select()
+      if (error) throw error
+      return data?.[0]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['testimonials'] })
@@ -34,7 +36,8 @@ export function useTestimonials() {
 
   const deleteTestimonial = useMutation({
     mutationFn: async (id: string) => {
-      await blink.db.table('testimonials').remove(id)
+      const { error } = await supabase.from('testimonials').delete().eq('id', id)
+      if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['testimonials'] })

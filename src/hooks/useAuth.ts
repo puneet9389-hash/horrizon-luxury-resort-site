@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { blink } from '@/lib/blink'
+import { supabase } from '@/lib/supabase'
 
 export type User = {
   id: string
@@ -13,28 +13,62 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = blink.auth.onAuthStateChanged((state) => {
-      if (state.user) {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
         setUser({
-          id: state.user.id,
-          email: state.user.email,
-          displayName: state.user.display_name,
-          role: state.user.role,
+          id: session.user.id,
+          email: session.user.email || '',
+          displayName: session.user.user_metadata?.display_name,
+          role: session.user.user_metadata?.role,
+        })
+      }
+      setIsLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          displayName: session.user.user_metadata?.display_name,
+          role: session.user.user_metadata?.role,
         })
       } else {
         setUser(null)
       }
-      
-      if (!state.isLoading) {
-        setIsLoading(false)
-      }
     })
 
-    return () => unsubscribe()
+    return () => subscription?.unsubscribe()
   }, [])
 
-  const login = () => blink.auth.login()
-  const logout = () => blink.auth.logout()
+  const login = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) throw error
+    return data
+  }
 
-  return { user, isLoading, login, logout, isAuthenticated: !!user }
+  const register = async (email: string, password: string, displayName?: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: displayName,
+        },
+      },
+    })
+    if (error) throw error
+    return data
+  }
+
+  const logout = () => supabase.auth.signOut()
+
+  return { user, isLoading, login, register, logout, isAuthenticated: !!user }
 }

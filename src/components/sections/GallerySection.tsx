@@ -22,17 +22,17 @@ const galleryItems: { src: string; alt: string; category: Exclude<Category, 'All
     category: 'Outside',
   },
   {
-    src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
+    src: 'assets/552901020_17861190324489200_2312360974907641060_n (1).jpg?auto=format&fit=crop&q=80&w=800',
     alt: 'Luxury Bedroom',
     category: 'Rooms',
   },
   {
-    src: 'https://images.unsplash.com/photo-1585659722983-3a675dabf23d?auto=format&fit=crop&q=80&w=800',
+    src: 'assets/553669280_17861190315489200_3306663839566961106_n (1).jpg?auto=format&fit=crop&q=80&w=800',
     alt: 'Suite Interior',
     category: 'Rooms',
   },
   {
-    src: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800',
+    src: 'assets/608200439_17871536241489200_5106764748960272210_n (1).jpg?auto=format&fit=crop&q=80&w=800',
     alt: 'Modern Bathroom',
     category: 'Rooms',
   },
@@ -52,7 +52,7 @@ const galleryItems: { src: string; alt: string; category: Exclude<Category, 'All
     category: 'Pool',
   },
   {
-    src: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipNNV0EDp2basbhH7gOyF6uDYyY7lKLy0DTRPKst=s1360-w1360-h1020-rw?auto=format&fit=crop&q=80&w=800',
     alt: 'Event Hall',
     category: 'Hall',
   },
@@ -77,10 +77,15 @@ const galleryItems: { src: string; alt: string; category: Exclude<Category, 'All
     category: 'Events',
   },
   {
-    src: 'https://images.unsplash.com/photo-1757889693460-ee7ce71395db?auto=format&fit=crop&q=80&w=800',
-    alt: 'Illuminated Pool',
-    category: 'Pool',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipOZtvSgrUVIPPxowZGy2e4_XsOZY8EIw7zlkYIu=s1360-w1360-h1020-rw?auto=format&fit=crop&q=80&w=800',
+    alt: 'party Pool',
+    category: 'Hall',
   },
+  {
+    src: 'https://lh3.googleusercontent.com/p/AF1QipNaqAfhmRfxWIBXypp_p04SkLEiouMSpYg7uMHC=s1360-w1360-h1020-rw?auto=format&fit=crop&q=80&w=800',
+    alt: 'Event hall',
+    category: 'Hall',
+  }
 ]
 
 const categories: Category[] = ['All', 'Outside', 'Rooms', 'Pool', 'Hall', 'Events']

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { blink } from '@/lib/blink'
+import { supabase } from '@/lib/supabase'
 
 export type Package = {
   id: string
@@ -19,25 +19,18 @@ export function usePackages() {
   const listPackages = useQuery({
     queryKey: ['packages'],
     queryFn: async () => {
-      const { data } = await blink.db.table('packages').list()
-      return data as Package[]
+      const { data, error } = await supabase.from('packages').select('*')
+      if (error) throw error
+      return (data as Package[]) || []
     },
-  })
-
-  const getPackage = (id: string) => useQuery({
-    queryKey: ['package', id],
-    queryFn: async () => {
-      const { data } = await blink.db.table('packages').get(id)
-      return data as Package
-    },
-    enabled: !!id,
   })
 
   const createPackage = useMutation({
     mutationFn: async (newPackage: Partial<Package>) => {
       const id = crypto.randomUUID()
-      const { data } = await blink.db.table('packages').create({ ...newPackage, id })
-      return data
+      const { data, error } = await supabase.from('packages').insert([{ ...newPackage, id, createdAt: new Date().toISOString() }]).select()
+      if (error) throw error
+      return data?.[0]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['packages'] })
@@ -46,8 +39,9 @@ export function usePackages() {
 
   const updatePackage = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Package> & { id: string }) => {
-      const { data } = await blink.db.table('packages').update(id, updates)
-      return data
+      const { data, error } = await supabase.from('packages').update(updates).eq('id', id).select()
+      if (error) throw error
+      return data?.[0]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['packages'] })
@@ -56,12 +50,30 @@ export function usePackages() {
 
   const deletePackage = useMutation({
     mutationFn: async (id: string) => {
-      await blink.db.table('packages').remove(id)
+      const { error } = await supabase.from('packages').delete().eq('id', id)
+      if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['packages'] })
     },
   })
 
-  return { listPackages, getPackage, createPackage, updatePackage, deletePackage }
+  return {
+    listPackages,
+    createPackage,
+    updatePackage,
+    deletePackage,
+  }
+}
+
+export function usePackage(id: string) {
+  return useQuery({
+    queryKey: ['package', id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('packages').select('*').eq('id', id).single()
+      if (error) throw error
+      return data as Package
+    },
+    enabled: !!id,
+  })
 }

@@ -1,0 +1,46 @@
+# Supabase Configuration
+# Generated for The Horrizon luxury resort project
+
+[db]
+# Database port (default: 5432)
+port = 5432
+# Shadow database port (for migrations)
+shadow_port = 54321
+
+[studio]
+# Studio port (Supabase Studio)
+port = 54322
+
+[inbucket]
+# Email testing service port
+port = 54323
+smtp_port = 54324
+pop3_port = 54325
+
+[functions]
+# JavaScript runtime functions port
+port = 54326
+
+[vector]
+# Vector database port (pgvector)
+port = 54327
+
+[auth]
+# OAuth redirects - configure your domain here
+# Example: http://localhost:3000/auth/v1/callback
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/auth/v1/callback", "http://localhost:3000/auth/v1/callback"]
+
+# JWT signing secret (use for local development)
+jwt_expiry_secs = 3600
+jwt_secret = "your-jwt-secret-key"
+
+# External auth providers
+[auth.external]
+google = {enabled = true}
+
+[provider.github]
+enabled = false
+
+[provider.google]
+enabled = true

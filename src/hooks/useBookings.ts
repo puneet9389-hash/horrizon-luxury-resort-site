@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { blink } from '@/lib/blink'
+import { supabase } from '@/lib/supabase'
 import { useAuth } from './useAuth'
 
 export type Booking = {
@@ -25,8 +25,12 @@ export function useBookings() {
     queryKey: ['bookings', user?.id],
     queryFn: async () => {
       if (!user) return []
-      const { data } = await blink.db.table('bookings').list({ userId: user.id })
-      return data as Booking[]
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('userId', user.id)
+      if (error) throw error
+      return (data || []) as Booking[]
     },
     enabled: !!user,
   })
@@ -34,8 +38,11 @@ export function useBookings() {
   const listAllBookings = useQuery({
     queryKey: ['bookings', 'all'],
     queryFn: async () => {
-      const { data } = await blink.db.table('bookings').list()
-      return data as Booking[]
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+      if (error) throw error
+      return (data || []) as Booking[]
     },
     enabled: !!user && user.role === 'admin',
   })
@@ -43,12 +50,16 @@ export function useBookings() {
   const createBooking = useMutation({
     mutationFn: async (newBooking: Partial<Booking>) => {
       const id = crypto.randomUUID()
-      const { data } = await blink.db.table('bookings').create({ 
-        ...newBooking, 
-        id, 
-        userId: user?.id || 'anonymous'
-      })
-      return data
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([{ 
+          ...newBooking, 
+          id, 
+          userId: user?.id || 'anonymous'
+        }])
+        .select()
+      if (error) throw error
+      return data?.[0]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] })
@@ -57,8 +68,13 @@ export function useBookings() {
 
   const updateBookingStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: Booking['status'] }) => {
-      const { data } = await blink.db.table('bookings').update(id, { status })
-      return data
+      const { data, error } = await supabase
+        .from('bookings')
+        .update({ status })
+        .eq('id', id)
+        .select()
+      if (error) throw error
+      return data?.[0]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] })
@@ -67,7 +83,11 @@ export function useBookings() {
 
   const deleteBooking = useMutation({
     mutationFn: async (id: string) => {
-      await blink.db.table('bookings').remove(id)
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] })
@@ -76,3 +96,4 @@ export function useBookings() {
 
   return { listUserBookings, listAllBookings, createBooking, updateBookingStatus, deleteBooking }
 }
+

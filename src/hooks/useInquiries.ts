@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { blink } from '@/lib/blink'
+import { supabase } from '@/lib/supabase'
 
 export type Inquiry = {
   id: string
@@ -19,14 +19,16 @@ export function useInquiries() {
   const list = useQuery({
     queryKey: ['inquiries'],
     queryFn: async () => {
-      const { data } = await blink.db.table('inquiries').list()
-      return data as Inquiry[]
+      const { data, error } = await supabase.from('inquiries').select('*')
+      if (error) throw error
+      return (data as Inquiry[]) || []
     },
   })
   const create = useMutation({
     mutationFn: async (d: Partial<Inquiry>) => {
       const id = crypto.randomUUID()
-      await blink.db.table('inquiries').create({ ...d, id, status: 'new', createdAt: new Date().toISOString() })
+      const { error } = await supabase.from('inquiries').insert([{ ...d, id, status: 'new', createdAt: new Date().toISOString() }])
+      if (error) throw error
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inquiries'] }),
   })
