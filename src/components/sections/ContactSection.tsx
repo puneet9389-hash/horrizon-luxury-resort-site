@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { toast, Input, Button } from '@blinkdotnew/ui'
+import { toast, Input, Button } from '@/components/blink-ui-compat'
 import { MapPin, Phone, Mail, MessageCircle, Car, Train, Plane, Navigation } from 'lucide-react'
 import { useInquiries } from '@/hooks/useInquiries'
+import { CONTACT } from '@/config/contact'
 
 const gold = 'hsl(43 65% 55%)'
 
@@ -52,12 +53,16 @@ export default function ContactSection() {
         description: "We'll get back to you via WhatsApp soon.",
       })
       setForm({ name: '', phone: '', email: '', eventType: 'General Inquiry', message: '' })
-    } catch {
+    } catch (error) {
+      console.error('Inquiry submission error:', error)
       toast.error('Something went wrong. Please WhatsApp us directly.')
     } finally {
       setSubmitting(false)
     }
   }
+
+  const whatsappLink = `https://wa.me/${CONTACT.WHATSAPP}?text=Hi%2C%20I%27d%20like%20to%20inquire%20about%20The%20Horrizon`
+  const mapsEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${CONTACT.COORDINATES.LNG - 0.01},${CONTACT.COORDINATES.LAT - 0.01},${CONTACT.COORDINATES.LNG + 0.01},${CONTACT.COORDINATES.LAT + 0.01}&layer=mapnik&marker=${CONTACT.COORDINATES.LAT},${CONTACT.COORDINATES.LNG}`
 
   return (
     <section
@@ -95,16 +100,15 @@ export default function ContactSection() {
             transition={{ duration: 0.7 }}
             className="space-y-8"
           >
-            {/* Google Maps Embed */}
-            <div className="overflow-hidden" style={{ height: '320px' }}>
+            {/* OpenStreetMap Embed */}
+            <div className="overflow-hidden border border-white/10" style={{ height: '320px' }}>
               <iframe
                 title="The Horrizon Location"
                 width="100%"
                 height="100%"
                 frameBorder="0"
                 style={{ border: 0 }}
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU3s_Q&q=30.3457919,77.9648563&zoom=15`}
+                src={mapsEmbedUrl}
                 allowFullScreen
               />
             </div>
@@ -136,27 +140,27 @@ export default function ContactSection() {
                 <div className="flex gap-3 items-start">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0" style={{ color: gold }} />
                   <div>
-                    <p className="text-sm text-white/70">The Horrizon, Mussoorie Road</p>
-                    <p className="text-sm text-white/70">Dehradun, Uttarakhand - 248001</p>
+                    <p className="text-sm text-white/70">{CONTACT.ADDRESS.VENUE}</p>
+                    <p className="text-sm text-white/70">{CONTACT.ADDRESS.CITY}, {CONTACT.ADDRESS.STATE} - {CONTACT.ADDRESS.POSTAL_CODE}</p>
                   </div>
                 </div>
                 <div className="flex gap-3 items-center">
                   <Phone className="h-4 w-4 shrink-0" style={{ color: gold }} />
-                  <a href="tel:+919876543210" className="text-sm text-white/70 hover:text-white transition-colors">
-                    +91 98765 43210
+                  <a href={`tel:${CONTACT.PHONE_LINK}`} className="text-sm text-white/70 hover:text-white transition-colors">
+                    {CONTACT.PHONE}
                   </a>
                 </div>
                 <div className="flex gap-3 items-center">
                   <Mail className="h-4 w-4 shrink-0" style={{ color: gold }} />
-                  <a href="mailto:hello@thehorrizon.in" className="text-sm text-white/70 hover:text-white transition-colors">
-                    hello@thehorrizon.in
+                  <a href={`mailto:${CONTACT.EMAIL}`} className="text-sm text-white/70 hover:text-white transition-colors">
+                    {CONTACT.EMAIL}
                   </a>
                 </div>
               </div>
 
               {/* WhatsApp CTA */}
               <a
-                href="https://wa.me/919876543210?text=Hi%2C%20I%27d%20like%20to%20inquire%20about%20The%20Horrizon"
+                href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 flex items-center justify-center gap-3 w-full py-3.5 text-sm font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90"

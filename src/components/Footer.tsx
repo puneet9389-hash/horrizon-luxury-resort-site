@@ -13,7 +13,7 @@ function scrollToSection(href: string) {
 
 const gold = 'hsl(43 65% 55%)'
 
-export default function Footer() {
+export default React.memo(function Footer() {
   const year = new Date().getFullYear()
 
   return (
@@ -195,4 +195,4 @@ export default function Footer() {
       </div>
     </footer>
   )
-}
+})

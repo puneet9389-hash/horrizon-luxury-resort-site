@@ -6,19 +6,19 @@ const gold = 'hsl(43 65% 55%)'
 
 const storyImages = [
   {
-    src: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=800',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipOJF-y7RpgLRSuK_Q5bQSHDMsuo3u32y-5091qY=s1360-w1360-h1020-rw?auto=format&fit=crop&q=80&w=800',
     alt: 'Villa exterior',
   },
   {
-    src: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    src: '/assets/568348331_17863741992489200_8314827710092237907_n.jpg',
     alt: 'Resort garden',
   },
   {
-    src: 'https://images.unsplash.com/photo-1704793027627-6b47800fc2ec?auto=format&fit=crop&q=80&w=800',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipN__UDs4kgUXzz--wKCOqbGvYYcKpe2RsUdM4gE=w243-h406-n-k-no-nu?auto=format&fit=crop&q=80&w=800',
     alt: 'Pool night',
   },
   {
-    src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
+    src: '/assets/608200439_17871536241489200_5106764748960272210_n (1).jpg?auto=format&fit=crop&q=80&w=800',
     alt: 'Luxury room',
   },
 ]
@@ -62,7 +62,7 @@ export default function AboutSection() {
 
             <p className="text-white/60 leading-relaxed mb-6" style={{ fontFamily: 'var(--font-sans)', fontSize: '1.05rem' }}>
               Born from a shared vision of two friends —{' '}
-              <strong className="text-white/90">Sardar Ji</strong> and{' '}
+              <strong className="text-white/90">Mr. Amrit Singh</strong> and{' '}
               <strong className="text-white/90">Manish Aggarwal</strong> — The Horrizon was
               created to bring a private luxury escape to the heart of Dehradun. Nestled in the
               serene foothills of the Himalayas, we built a place where friends gather, couples

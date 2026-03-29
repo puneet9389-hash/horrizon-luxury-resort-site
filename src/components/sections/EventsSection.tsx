@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { toast, Dialog, DialogContent, DialogHeader, DialogTitle, Button, Input, Badge } from '@blinkdotnew/ui'
+import { toast, Dialog, DialogContent, DialogHeader, DialogTitle, Button, Input, Badge } from '@/components/blink-ui-compat'
 import { X, ArrowRight } from 'lucide-react'
 import { useInquiries } from '@/hooks/useInquiries'
 
@@ -98,7 +98,8 @@ function InquiryModal({ open, eventName, onClose }: InquiryModalProps) {
       })
       onClose()
       setForm({ name: '', phone: '', email: '', eventType: eventName, eventDate: '', guestCount: '', message: '' })
-    } catch {
+    } catch (error) {
+      console.error('Event inquiry submission error:', error)
       toast.error('Something went wrong. Please WhatsApp us directly.')
     } finally {
       setSubmitting(false)

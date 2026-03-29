@@ -15,12 +15,12 @@ import {
   FieldDescription,
   EmptyState,
   toast,
-} from '@blinkdotnew/ui'
+} from '@/components/blink-ui-compat'
 import { Calendar, Users, Package, CreditCard, CheckCircle, MessageSquare } from 'lucide-react'
 import { usePackages } from '@/hooks/usePackages'
 import { useBookings } from '@/hooks/useBookings'
 import { useAuth } from '@/hooks/useAuth'
-import { useSearch } from '@tanstack/react-router'
+import { CONTACT } from '@/config/contact'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
@@ -28,15 +28,14 @@ export default function BookingPage() {
   const { listPackages } = usePackages()
   const { createBooking } = useBookings()
   const { user } = useAuth()
-  const search = useSearch({ from: '/booking' })
 
-  const [selectedPackageId, setSelectedPackageId] = useState<string>((search as any).packageId || '')
+  const [selectedPackageId, setSelectedPackageId] = useState<string>('')
   const [checkIn, setCheckIn] = useState<string>('')
   const [checkOut, setCheckOut] = useState<string>('')
   const [guests, setGuests] = useState<number>(2)
   const [totalPrice, setTotalPrice] = useState<number>(0)
 
-  const selectedPackage = listPackages.data?.find((p: any) => p.id === selectedPackageId)
+  const selectedPackage = listPackages.data?.find((p) => p.id === selectedPackageId)
 
   useEffect(() => {
     if (selectedPackage && checkIn && checkOut) {
@@ -65,14 +64,15 @@ export default function BookingPage() {
       toast.success('Booking Confirmed!', {
         description: `You've successfully booked the ${selectedPackage?.name} package.`,
       })
-    } catch {
+    } catch (error) {
+      console.error('Booking error:', error)
       toast.error('Booking failed', { description: 'Something went wrong while processing your request.' })
     }
   }
 
   const openWhatsApp = () => {
     const text = `Hi, I'm interested in booking the ${selectedPackage?.name} package for ${guests} guests starting from ${checkIn}.`
-    window.open(`https://wa.me/919876543210?text=${encodeURIComponent(text)}`, '_blank')
+    window.open(`https://wa.me/${CONTACT.WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank')
   }
 
   return (

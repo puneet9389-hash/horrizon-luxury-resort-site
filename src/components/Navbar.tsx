@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button } from '@blinkdotnew/ui'
+import { Button } from '@/components/blink-ui-compat'
 import { Menu, X } from 'lucide-react'
 
 const navLinks = [
@@ -22,7 +22,7 @@ function scrollToSection(href: string) {
   }
 }
 
-export default function Navbar() {
+export default React.memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -165,4 +165,4 @@ export default function Navbar() {
       </div>
     </>
   )
-}
+})
